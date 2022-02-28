@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Categoria, Editora
+
+
+class EditoraAdmin (admin.ModelAdmin):
+    list_display = ("nome","site")
+
+admin.site.register(Categoria)
+admin.site.register(Editora,EditoraAdmin)

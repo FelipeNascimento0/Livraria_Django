@@ -1,5 +1,6 @@
 from pickle import TRUE
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -32,6 +33,16 @@ class Livro(models.Model):
     preco = models.FloatField(verbose_name="preço")
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name="livros")
     editora = models.ForeignKey(Editora, on_delete=models.PROTECT, related_name="livros")
+    autores = models.ManyToManyField(Autor, related_name="livros")
 
     def __str__(self):
         return self.titulo
+
+class Compra(models.Model):
+    class StatusCompra(models.IntegerChoices):
+        CARRINHO = 1, "Carrinho",
+        REALIZADO = 2, "Realizado",
+        PAGO = 3, "Pago",
+        ENTREGUE = 4, "Entregue"
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT, related_name="compras")
+    status = models.IntegerField(choices=StatusCompra.choices, default=StatusCompra.CARRINHO)

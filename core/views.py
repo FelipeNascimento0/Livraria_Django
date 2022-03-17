@@ -1,13 +1,15 @@
 from dataclasses import fields
 from unicodedata import category
-from urllib import request
+from urllib import request, response
 from django.http import HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
 
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.serializers import ModelSerializer
 from rest_framework.response import Response
@@ -23,6 +25,11 @@ import json
 def teste(request):
     return HttpResponse("Olá pessoal do GitHub")
 
+
+
+#=======================================================================#
+#=====================FAZENDO AS REQUISIÇÕES COM JSON===================#
+#=======================================================================#
 
 @method_decorator(csrf_exempt, name="dispatch")
 class CategoriaView(View):
@@ -61,6 +68,18 @@ class CategoriaView(View):
         data = {'mensagem': 'item exluido com sucesso'}
         return JsonResponse(data)
 
+#=======================================================================-#
+
+
+
+#=======================================================================#
+#=================FAZENDO AS REQUISIÇÕES COM API REST===================#
+#=======================================================================#
+
+
+
+'''Aqui fiz um teste com varias maneiras de realizar um CRUD -----------'''
+
 class CategoriaSerializer(ModelSerializer):
     class Meta:
         model = Categoria
@@ -80,4 +99,25 @@ class CategoriaList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CategoriaDetail(APIView):
+        def get(self,request, id):
+            categoria = get_object_or_404(Categoria.objects.all(), id=id)
+            serializer = CategoriaSerializer(categoria)
+            return Response(serializer.data)
+
+        def put(self,request, id):
+            categoria = get_object_or_404(Categoria.objects.all(), id=id)
+            serializer = CategoriaSerializer(categoria)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        def delete(self, request, id):
+            categoria = get_object_or_404(Categoria.objects.all, id=id)
+            categoria.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+            
             

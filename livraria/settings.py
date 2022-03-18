@@ -79,8 +79,12 @@ WSGI_APPLICATION = 'livraria.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DB_NAME', 'livraria_datas'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASS', 'postgre'),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

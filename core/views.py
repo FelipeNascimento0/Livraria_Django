@@ -8,9 +8,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 
 
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.serializers import ModelSerializer
 from rest_framework.response import Response
 
@@ -119,5 +121,15 @@ class CategoriaDetail(APIView):
             categoria = get_object_or_404(Categoria.objects.all, id=id)
             categoria.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CategoriasListGeneric(ListCreateAPIView):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+class CategoriaUpdateDestroy(RetrieveUpdateDestroyAPIView):
+    lookup_field = 'id'
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
             
             

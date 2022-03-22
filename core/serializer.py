@@ -27,10 +27,14 @@ class LivroSerializer(ModelSerializer):
 
 
 class ItensDeCompraSerializer(ModelSerializer):
+    total = SerializerMethodField()
+
     class Meta:
         model = ItensCompra
-        fields = ('livro','quantidade')
-        depth = 1
+        fields = ('livro','quantidade','total')
+        depth = 2
+    def get_total(self, instance):
+        return instance.quantidade * instance.livro.preco
 
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source='usuario.email')
@@ -40,7 +44,7 @@ class CompraSerializer(ModelSerializer):
 
     class Meta:
         model = Compra
-        fields = '__all__'
+        fields = ("id","status","usuario","itens","total")
 
     def get_status(self, instance):
         return instance.get_status_display()
